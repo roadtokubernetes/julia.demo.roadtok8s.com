@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: julia-demos-roadtok8s-com-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: julia-demos-roadtok8s-com-deployment
+  template:
+    metadata:
+      labels:
+        app: julia-demos-roadtok8s-com-deployment
+    spec:
+      containers:
+        - name: julia-demos-roadtok8s-com-container
+          image: roadtokubernetes/julia.demo.roadtok8s.com:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "3001"
+          ports:
+            - name: julia-demo-port
+              containerPort: 3001
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: julia-demo-port
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: julia-demo-port
+            failureThreshold: 30
+            periodSeconds: 10
+
